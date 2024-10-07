@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow Dashboard</title>
+    <style>
+        /* Global styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f4f9;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .page {
+            padding: 20px;
+        }
+
+        /* Login container styles */
+        .login-container {
+            width: 300px;
+            margin: 100px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .login-container h1 {
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #2b7a78;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3aafa9;
+        }
+
+        .error-msg {
+            color: red;
+            margin-top: 10px;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            width: 200px;
+            background-color: #2b7a78;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            padding-top: 20px;
+        }
+
+        .sidebar nav ul {
+            list-style-type: none;
+        }
+
+        .sidebar nav ul li {
+            margin-bottom: 20px;
+        }
+
+        .sidebar nav ul li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px 20px;
+            transition: background 0.3s;
+        }
+
+        .sidebar nav ul li a:hover {
+            background-color: #3aafa9;
+        }
+
+        /* Content styles */
+        .content {
+            margin-left: 220px;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #def2f1;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h2 {
+            margin: 0;
+        }
+
+        button#logout-btn, button#logout-btn-emp {
+            background-color: #fe4a49;
+        }
+
+        /* Task card styles */
+        .task-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 30%;
+            margin: 15px;
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+        }
+
+        .task-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .task-card h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .task-card p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .task-card a {
+            text-decoration: none;
+            background-color: #2b7a78;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .task-card a:hover {
+            background-color: #3aafa9;
+        }
+
+        /* Profile styles */
+        .profile-container {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            animation: fadeIn 1s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-pic {
+            flex: 0 0 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: url('https://randomuser.me/api/portraits/women/44.jpg') no-repeat center center/cover;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-details {
+            flex-grow: 1;
+            padding-left: 40px;
+            color: #333;
+        }
+
+        .profile-details h1 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            color: #2b7a78;
+        }
+
+        .profile-details p {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .profile-details .details-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .profile-details .details-row i {
+            font-size: 1.5rem;
+            color: #2b7a78;
+            margin-right: 10px;
+        }
+
+        .profile-details a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background-color: #2b7a78;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .profile-details a:hover {
+            background-color: #3aafa9;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="login-page" class="page">
+        <div class="login-container">
+            <h 1>TASKFLOW</h1>
+            <img src="logo.png" alt="TaskFlow Logo" class="logo">
+            <form id="loginForm">
+                <input type="text" id="username" placeholder=" Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <select id="role" required>
+                    <option value="" disabled selected>Select Role</option>
+                    <option value="admin">Admin</option>
+                    <option value="employee">Employee</option>
+                </select>
+                <button type="submit">Login</button>
+                <p id="login-error" class="error-msg"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="page hidden">
+        <header>
+            <h2>Admin Dashboard</h2>
+            <button id="logout-btn">Logout</button>
+        </header>
+        <div class="sidebar">
+            <nav>
+                <ul>
+                    <li><a href="#" class="active" onclick="showSection('admin-overview')">Overview</a></li>
+                    <li><a href="#" onclick="showSection('admin-tasks')">Task Management</a></li>
+                    <li><a href="#" onclick="showSection('admin-employees')">Employee Management</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="content">
+            <div id="admin-overview" class="section">
+                <h3>Overview</h3>
+                <div class="overview-container">
+                    <div class="overview-card">
+                        <h3>Total Tasks</h3>
+                        <p>50</p>
+                    </div>
+                    <div class="overview-card">
+                        <h3>Completed Tasks</h3>
+                        <p>30</p>
+                    </div>
+                    <div class="overview-card">
+                        <h3>Pending Tasks</h3>
+                        <p>20</p>
+                    </div>
+                    <div class="overview-card">
+                        <h3>Employee Performance</h3>
+                        <p>Good</p>
+                    </div>
+                </div>
+            </div>
+            <div id="admin-tasks" class="section hidden">
+                <h3>Task Management</h3>
+                <div class="task-card">
+                    <h3>Task 1: Design Project</h3>
+                    <p>Design a project on web security using basics functionalities.</p>
+                </div>
+                <div class="task-card">
+                    <h3>Task 2: Server Maintenance</h3>
+                    <p>maintain the server</p>
+                </div>
+                <!-- Add more tasks as needed -->
+            </div>
+            <div id="admin-employees" class="section hidden">
+                <h3>Employee Management</h3>
+                <div class="employee-card">
+                    <h3>Employee 1: John Doe</h3>
+                    <p><span>Role:</span> Developer</p>
+                    <p><span>Performance:</span> Excellent</p>
+                </div>
+                <div class="employee-card">
+                    <h3>Employee 2: Sarah Smith</h3>
+                    <p><span>Role:</span> Designer</p>
+                    <p><span>Performance:</span> Good</p>
+                </div>
+                <!-- Add more employees as needed -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Employee Dashboard -->
+    <div id="employee-dashboard" class="page hidden">
+        <header>
+            <h2>Employee Dashboard</h2>
+            <button id="logout-btn-emp">Logout</button>
+        </header>
+        <div class="sidebar">
+            <nav>
+                <ul>
+                    <li><a href="#" class="active" onclick="showSection('employee-tasks')">My Tasks</a></li>
+                    <li><a href="#" onclick="showSection('employee-profile')">Profile</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="content">
+            <div id="employee-tasks" class="section">
+                <h3>My Tasks</h3>
+                <div class="task-card">
+                    <h3>Task 1: Design New UI</h3>
+                    <p>Complete the redesign of the company's internal dashboard.</p>
+                    <a href="task-details.html?task=1">View Details</a>
+                </div>
+
+                <div class="task-card">
+                    <h3>Task 2: Server Maintenance</h3>
+                    <p>Perform routine checks and updates on the production server.</p>
+                    <a href="task-details.html?task=2">View Details</a>
+                </div>
+
+                <div class="task-card">
+                    <h3>Task 3: Team Meeting</h3>
+                    <p>Prepare presentation and attend the weekly team meeting.</p>
+                    <a href="task-details.html?task=3">View Details</a>
+                </div>
+
+                <div class="task-card">
+                    <h3>Task 4: Code Review</h3>
+                    <p>Review code submissions from junior developers and provide feedback.</p>
+                    <a href="task-details.html?task=4">View Details</a>
+                </div>
+
+                <div class="task-card">
+                    <h3>Task 5: Client Presentation</h3>
+                    <p>Prepare and present the project progress to the client.</p>
+                    <a href="task-details.html?task=5">View Details</a>
+                </div>
+
+                <div class="task-card">
+                    <h3>Task 6: Bug Fixes</h3>
+                    <p>Resolve critical bugs in the production environment.</p>
+                    <a href="task-details.html?task=6">View Details</a>
+                </div>
+            </div>
+            <div id="employee-profile" class="section hidden">
+                <div class="profile-container">
+                    <!-- Profile Picture -->
+                    <div class="profile-pic"></div>
+
+                    <!-- Profile Details -->
+                    <div class="profile-details">
+                        <h1>Angelia</h1>
+                        <p>Software Developer | Designer | Tech Enthusiast</p>
+
+                        <div class="details-row">
+                            <i class="fas fa-envelope"></i>
+                            <span>angelia123@gmail.com</span>
+                        </div>
+                        <div class="details-row">
+                            <i class="fas fa-phone-alt"></i>
+                            <span>+91 9876543210</span>
+                        </div>
+                        <div class="details-row">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Mumbai, India</span>
+                        </div>
+                        <a href="#">Edit Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock database for users
+        const users = [
+            { username: "Tanisha", password: "tanisha123", role: "admin" },
+            { username: "employee", password: "employee123", role: "employee" }
+        ];
+
+        // Login form event listener
+        document.getElementById("loginForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password"). value;
+            const role = document.getElementById("role").value;
+            const user = users.find(user => user.username === username && user.password === password && user.role === role);
+            
+            if (user) {
+                document.getElementById("login-page").classList.add("hidden");
+                if (user.role === "admin") {
+                    document.getElementById("admin-dashboard").classList.remove("hidden");
+                } else {
+                    document.getElementById("employee-dashboard").classList.remove("hidden");
+                }
+            } else {
+                document.getElementById("login-error").textContent = "Invalid credentials!";
+            }
+        });
+
+        // Logout button functionality
+        document.getElementById("logout-btn").addEventListener("click", function () {
+            location.reload();
+        });
+        document.getElementById("logout-btn-emp").addEventListener("click", function () {
+            location.reload();
+        });
+
+        // Show different sections in the dashboards
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll(".section");
+            sections.forEach(section => section.classList.add("hidden"));
+            document.getElementById(sectionId).classList.remove("hidden");
+        }
+    </script>
+</body>
+</html>

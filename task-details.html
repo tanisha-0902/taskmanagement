@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .task-details-container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-details-container h2 {
+            color: #2b7a78;
+            margin-bottom: 20px;
+        }
+
+        .task-details-container p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .task-details-container a {
+            display: inline-block;
+            margin-top: 20px;
+            background-color: #2b7a78;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .task-details-container a:hover {
+            background-color: #3aafa9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="task-details-container">
+        <h2 id="task-title">Task Title</h2>
+        <p id="task-desc">Task description will go here.</p>
+        <a href="my-tasks.html">Back to My Tasks</a>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const taskId = urlParams.get('task');
+
+        const tasks = {
+            1: {
+                title: "Task 1: Design New UI",
+                description: "Your task is to design a new user interface for the internal dashboard. Make sure to follow the company's design guidelines."
+            },
+            2: {
+                title: "Task 2: Server Maintenance",
+                description: "You need to perform routine maintenance checks on the production server. Ensure all backups are in place and apply any necessary updates."
+            },
+            3: {
+                title: "Task 3: Team Meeting",
+                description: "Prepare a presentation for the weekly team meeting. You will be discussing the project milestones achieved so far."
+            },
+            4: {
+                title: "Task 4: Code Review",
+                description: "Review code submissions from junior developers. Ensure code quality, adherence to best practices, and provide feedback."
+            },
+            5: {
+                title: "Task 5: Client Presentation",
+                description: "Prepare a detailed presentation for the client meeting. Highlight project progress, milestones achieved, and upcoming deliverables."
+            },
+            6: {
+                title: "Task 6: Bug Fixes",
+                description: "Fix critical bugs reported in the production environment. Ensure a smooth deployment after resolving the issues."
+            }
+        };
+
+        if (tasks[taskId]) {
+            document.getElementById("task-title").textContent = tasks[taskId].title;
+            document.getElementById("task-desc").textContent = tasks[taskId].description;
+        }
+    </script>
+
+</body>
+</html>
